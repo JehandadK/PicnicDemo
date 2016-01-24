@@ -1,8 +1,6 @@
 package com.jehandadk.picnic.activities;
 
 import android.os.Bundle;
-import android.support.design.widget.FloatingActionButton;
-import android.support.design.widget.Snackbar;
 import android.support.v4.app.Fragment;
 import android.support.v7.widget.Toolbar;
 import android.view.Menu;
@@ -10,6 +8,7 @@ import android.view.MenuItem;
 import android.widget.FrameLayout;
 
 import com.jehandadk.picnic.R;
+import com.jehandadk.picnic.fragments.ProductsFragment;
 
 import butterknife.Bind;
 import butterknife.ButterKnife;
@@ -18,8 +17,6 @@ public class MainActivity extends BaseActivity {
 
     @Bind(R.id.toolbar)
     Toolbar toolbar;
-    @Bind(R.id.fab)
-    FloatingActionButton fab;
     @Bind(R.id.frame_fragment)
     FrameLayout frameFragment;
 
@@ -29,11 +26,9 @@ public class MainActivity extends BaseActivity {
         setContentView(R.layout.activity_main);
         ButterKnife.bind(this);
         setSupportActionBar(toolbar);
-        fab.setOnClickListener(view -> Snackbar.make(view, "Replace with your own action", Snackbar.LENGTH_LONG)
-                .setAction("Action", null).show());
 
-//        if (getCurrentFragment() == null)
-//            setFrameFragment(ProductsFagment.newFragment());
+        if (getCurrentFragment() == null)
+            setFrameFragment(ProductsFragment.newFragment());
     }
 
     protected void setFrameFragment(Fragment fragment) {

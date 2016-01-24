@@ -4,6 +4,10 @@ import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.view.View;
 
+import com.jehandadk.picnic.MainComponent;
+import com.jehandadk.picnic.PicnicApp;
+import com.jehandadk.picnic.activities.BaseActivity;
+
 import butterknife.ButterKnife;
 
 /**
@@ -21,5 +25,17 @@ public class BaseFragment extends Fragment {
     public void onDestroyView() {
         super.onDestroyView();
         ButterKnife.unbind(this);
+    }
+
+    protected BaseActivity getBaseActivity() {
+        return (BaseActivity) getActivity();
+    }
+
+    public PicnicApp getPicnicApp() {
+        return getBaseActivity().getPicnicApp();
+    }
+
+    public MainComponent getMainComponent() {
+        return getPicnicApp().getMainComponent();
     }
 }

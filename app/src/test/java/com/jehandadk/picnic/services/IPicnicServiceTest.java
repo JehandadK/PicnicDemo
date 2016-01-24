@@ -4,19 +4,21 @@ import android.support.annotation.NonNull;
 
 import com.google.gson.Gson;
 import com.jehandadk.picnic.BuildConfig;
-import com.jehandadk.picnic.data.models.Product;
+import com.jehandadk.picnic.data.models.ProductDetail;
 import com.jehandadk.picnic.data.responses.ProductsListResponse;
-import com.squareup.okhttp.OkHttpClient;
-import com.squareup.okhttp.logging.HttpLoggingInterceptor;
 
 import org.junit.BeforeClass;
 import org.junit.Test;
 
-import java.util.List;
-
-import retrofit.GsonConverterFactory;
-import retrofit.Response;
-import retrofit.Retrofit;
+import okhttp3.OkHttpClient;
+import okhttp3.logging.HttpLoggingInterceptor;
+import retrofit2.GsonConverterFactory;
+import retrofit2.Result;
+import retrofit2.Retrofit;
+import retrofit2.RxJavaCallAdapterFactory;
+import rx.Observable;
+import rx.Observer;
+import rx.schedulers.Schedulers;
 
 import static org.hamcrest.CoreMatchers.anyOf;
 import static org.hamcrest.CoreMatchers.equalTo;
@@ -46,6 +48,7 @@ public class IPicnicServiceTest {
     public static void createClient() {
         service = new Retrofit.Builder()
                 .client(getClient())
+                .addCallAdapterFactory(RxJavaCallAdapterFactory.create())
                 .addConverterFactory(GsonConverterFactory.create(new Gson()))
                 .baseUrl(BuildConfig.ENDPOINT)
                 .build()
@@ -56,26 +59,61 @@ public class IPicnicServiceTest {
     private static OkHttpClient getClient() {
         HttpLoggingInterceptor logging = new HttpLoggingInterceptor();
         logging.setLevel(HttpLoggingInterceptor.Level.BODY);
-        OkHttpClient client = new OkHttpClient();
-        client.networkInterceptors().add(logging);
-        return client;
+        OkHttpClient.Builder builder = new OkHttpClient.Builder();
+        builder.interceptors().add(logging);
+        return builder.build();
     }
 
     @Test
     public void testGetProducts() throws Exception {
-        Response<List<Product>> response = service.getProducts().execute();
-        assertThat(response.code(), is(anyOf(equalTo(200), equalTo(304))));
+        Observable<Result<ProductsListResponse>> response = service.getProducts();
+        response
+                .subscribeOn(Schedulers.immediate())
+                .observeOn(Schedulers.immediate())
+                .subscribe(new Observer<Result<ProductsListResponse>>() {
+                    @Override
+                    public void onCompleted() {
+
+                    }
+
+                    @Override
+                    public void onError(Throwable e) {
+
+                    }
+
+                    @Override
+                    public void onNext(Result<ProductsListResponse> productsListResponse) {
+                        assertThat(productsListResponse.response().body().getProducts().size(), org.hamcrest.Matchers.greaterThan(1));
+                    }
+                });
+
+//        assertThat(response.code(), is(anyOf(equalTo(200), equalTo(304))));
     }
 
     @Test
     public void testGetProductDetail() throws Exception {
-        Response<ProductsListResponse> response = service.getProductDetail("1").execute();
-        assertThat(response.code(), is(anyOf(equalTo(200), equalTo(304))));
-        assertThat(response.body().getProducts(), is(notNullValue()));
+        service.getProductDetail("1").subscribeOn(Schedulers.immediate())
+                .observeOn(Schedulers.immediate())
+                .subscribe(new Observer<Result<ProductDetail>>() {
+                    @Override
+                    public void onCompleted() {
 
-        // Make various assumptions here about the api, though not required in a well defined api.
-        // Assumptions like the amount is in string but always parsable through currency parser
-        assertThat(response.body().getProducts().size(), org.hamcrest.Matchers.greaterThan(0));
+                    }
+
+                    @Override
+                    public void onError(Throwable e) {
+
+                    }
+
+                    @Override
+                    public void onNext(Result<ProductDetail> result) {
+
+                        // Make various assumptions here about the api, though not required in a well defined api.
+                        // Assumptions like the amount is in string but always parsable through currency parser
+                        assertThat(result.response().code(), is(anyOf(equalTo(200), equalTo(304))));
+                        assertThat(result.response().body(), is(notNullValue()));
+                    }
+                });
 
     }
 }

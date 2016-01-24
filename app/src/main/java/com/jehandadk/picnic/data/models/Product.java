@@ -3,9 +3,12 @@ package com.jehandadk.picnic.data.models;
 import com.google.gson.annotations.Expose;
 import com.google.gson.annotations.SerializedName;
 
+import org.parceler.Parcel;
+
 /**
  * Created by jehandad.kamal on 1/24/2016.
  */
+@Parcel
 public class Product {
     @SerializedName("product_id")
     @Expose

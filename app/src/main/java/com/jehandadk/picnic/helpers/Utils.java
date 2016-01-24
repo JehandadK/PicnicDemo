@@ -1,4 +1,4 @@
-package com.jehandadk.picnic;
+package com.jehandadk.picnic.helpers;
 
 import java.text.NumberFormat;
 

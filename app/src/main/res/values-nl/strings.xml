@@ -1,4 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
     <string name="retry">opnieuw proberen</string>
+    <string name="msg_loading">het laden...</string>
+
 </resources>

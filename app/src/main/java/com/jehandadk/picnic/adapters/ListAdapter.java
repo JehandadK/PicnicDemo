@@ -10,7 +10,7 @@ import java.util.List;
  */
 public abstract class ListAdapter<VH extends RecyclerView.ViewHolder, ENTITY> extends RecyclerView.Adapter<VH> {
 
-    List<ENTITY> list;
+    protected List<ENTITY> list;
 
     public ListAdapter(List<ENTITY> list) {
         this.list = list;
@@ -30,5 +30,14 @@ public abstract class ListAdapter<VH extends RecyclerView.ViewHolder, ENTITY> ex
     @Override
     public int getItemCount() {
         return list.size();
+    }
+
+    public List<ENTITY> getList() {
+        return list;
+    }
+
+    public void addAll(List<ENTITY> newItems) {
+        list.addAll(newItems);
+        notifyDataSetChanged();
     }
 }

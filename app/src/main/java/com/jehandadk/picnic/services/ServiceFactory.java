@@ -1,13 +1,16 @@
 package com.jehandadk.picnic.services;
 
 import com.jehandadk.picnic.BuildConfig;
-import com.squareup.okhttp.Interceptor;
-import com.squareup.okhttp.OkHttpClient;
-import com.squareup.okhttp.logging.HttpLoggingInterceptor;
 
-import retrofit.GsonConverterFactory;
-import retrofit.Retrofit;
+import dagger.Module;
+import okhttp3.Interceptor;
+import okhttp3.OkHttpClient;
+import okhttp3.logging.HttpLoggingInterceptor;
+import retrofit2.GsonConverterFactory;
+import retrofit2.Retrofit;
+import retrofit2.RxJavaCallAdapterFactory;
 
+@Module
 public class ServiceFactory {
 
     /**
@@ -19,6 +22,7 @@ public class ServiceFactory {
     public static <T> T createRetrofitService(final Class<T> clazz) {
         final Retrofit restAdapter = new Retrofit.Builder()
                 .client(getClient())
+                .addCallAdapterFactory(RxJavaCallAdapterFactory.create())
                 .addConverterFactory(GsonConverterFactory.create())
                 .baseUrl(BuildConfig.ENDPOINT)
                 .build();

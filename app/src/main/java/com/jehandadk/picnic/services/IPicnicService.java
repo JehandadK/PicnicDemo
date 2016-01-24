@@ -1,13 +1,12 @@
 package com.jehandadk.picnic.services;
 
-import com.jehandadk.picnic.data.models.Product;
+import com.jehandadk.picnic.data.models.ProductDetail;
 import com.jehandadk.picnic.data.responses.ProductsListResponse;
 
-import java.util.List;
-
-import retrofit.Call;
-import retrofit.http.GET;
-import retrofit.http.Path;
+import retrofit2.Result;
+import retrofit2.http.GET;
+import retrofit2.http.Path;
+import rx.Observable;
 
 /**
  * Created by jehandad.kamal on 1/24/2016.
@@ -15,8 +14,8 @@ import retrofit.http.Path;
 public interface IPicnicService {
 
     @GET("cart/list")
-    Call<List<Product>> getProducts();
+    Observable<Result<ProductsListResponse>> getProducts();
 
     @GET("cart/{product_id}/detail ")
-    Call<ProductsListResponse> getProductDetail(@Path("product_id") String productId);
+    Observable<Result<ProductDetail>> getProductDetail(@Path("product_id") String productId);
 }

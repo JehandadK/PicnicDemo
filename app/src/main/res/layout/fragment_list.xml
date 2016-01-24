@@ -1,6 +1,8 @@
 <?xml version="1.0" encoding="utf-8"?>
-<merge xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:tools="http://schemas.android.com/tools">
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent">
 
     <android.support.v7.widget.RecyclerView xmlns:android="http://schemas.android.com/apk/res/android"
         android:id="@+id/list"
@@ -15,13 +17,15 @@
         style="?android:attr/indeterminateProgressStyle"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_gravity="center" />
+        android:layout_centerInParent="true" />
 
-    <RelativeLayout
+    <LinearLayout
         android:id="@+id/layout_list_error"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_gravity="center"
+        android:layout_centerInParent="true"
+        android:layout_margin="10dp"
+        android:orientation="vertical"
         android:visibility="invisible">
 
         <TextView
@@ -33,9 +37,10 @@
             android:id="@+id/btn_retry"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
+            android:layout_gravity="center_horizontal"
             android:text="@string/msg_retry">
 
         </Button>
 
-    </RelativeLayout>
-</merge>
+    </LinearLayout>
+</RelativeLayout>

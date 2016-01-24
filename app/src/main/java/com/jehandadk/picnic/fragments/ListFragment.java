@@ -8,18 +8,19 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
+import android.widget.LinearLayout;
 import android.widget.ProgressBar;
-import android.widget.RelativeLayout;
 import android.widget.TextView;
 
 import com.jehandadk.picnic.R;
+import com.jehandadk.picnic.services.LoadingListener;
 
 import butterknife.Bind;
 
 /**
  * Created by jehandad.kamal on 1/24/2016.
  */
-public abstract class ListFragment extends BaseFragment {
+public abstract class ListFragment extends BaseFragment implements LoadingListener {
 
     @Bind(R.id.list)
     RecyclerView list;
@@ -30,7 +31,7 @@ public abstract class ListFragment extends BaseFragment {
     @Bind(R.id.btn_retry)
     Button btnRetry;
     @Bind(R.id.layout_list_error)
-    RelativeLayout layoutListError;
+    LinearLayout layoutListError;
 
     @Nullable
     @Override
@@ -42,9 +43,10 @@ public abstract class ListFragment extends BaseFragment {
     @Override
     public void onViewCreated(View view, Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
+        btnRetry.setOnClickListener((v) -> retry());
     }
 
-    protected abstract void loadData();
+    protected abstract void retry();
 
     protected void showList() {
         list.setVisibility(View.VISIBLE);
@@ -74,5 +76,19 @@ public abstract class ListFragment extends BaseFragment {
         txtError.setText(errMessage);
     }
 
+    protected void setErrMessage(String message) {
+        showErrorLayout();
+        txtError.setText(message);
+    }
+
+    @Override
+    public void onLoadingFinished() {
+        showList();
+    }
+
+    @Override
+    public void onLoadingStarted() {
+        showLoadingLayout();
+    }
 }
 

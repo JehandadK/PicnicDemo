@@ -1,4 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
     <string name="msg_retry">Retry</string>
+    <string name="msg_loading">Loading...</string>
+    <string name="msg_err_unknown">Ooops, Something went wrong!</string>
 </resources>
