@@ -28,11 +28,17 @@ Would like to demonstrate further
 - Logging leveraging DI
 - UnitTests for HandlerSubscriber class
 - Bus leveraging Rx to do inter Fragment activity communication
+- New Permissions api
+- New Data Binding api
+- Alternate layout for landscape orientation of Detail
+- Using android annotations to clean up some more code
 
 Stuff that should be a part of production app:
 
 - Analytics
 - Crash Reports
 - Bug Report Sender (Instabug)
+- Priority Queues for Http requests
+- Glide configuration with insight to app data
 
 
