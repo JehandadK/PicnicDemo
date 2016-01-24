@@ -11,31 +11,31 @@ import com.jehandadk.picnic.adapters.ProductsAdapter;
 import com.jehandadk.picnic.data.models.Err;
 import com.jehandadk.picnic.data.models.Product;
 import com.jehandadk.picnic.data.responses.ProductsListResponse;
+import com.jehandadk.picnic.services.ErrorListener;
+import com.jehandadk.picnic.services.HandlerSubscriber;
 import com.jehandadk.picnic.services.IPicnicService;
+import com.jehandadk.picnic.services.LoadingListener;
 
 import org.parceler.Parcels;
 
 import java.io.IOException;
-import java.lang.annotation.Annotation;
 
 import javax.inject.Inject;
 
 import butterknife.BindInt;
 import jp.wasabeef.recyclerview.animators.SlideInUpAnimator;
-import okhttp3.ResponseBody;
-import retrofit2.Converter;
+import retrofit2.Response;
 import retrofit2.Result;
 import retrofit2.Retrofit;
 import rx.Observable;
 import rx.Subscription;
 import rx.android.schedulers.AndroidSchedulers;
-import rx.functions.Action1;
 import rx.schedulers.Schedulers;
 
 /**
  * Created by jehandad.kamal on 1/24/2016.
  */
-public class ProductsFragment extends ListFragment implements ProductsAdapter.ProductClickedListener {
+public class ProductsFragment extends ListFragment implements ProductsAdapter.ProductClickedListener, ErrorListener {
 
 
     private static final String KEY_PRODUCTS = "products";
@@ -50,33 +50,6 @@ public class ProductsFragment extends ListFragment implements ProductsAdapter.Pr
     ProductsListResponse data;
     Observable<Result<ProductsListResponse>> request;
 
-
-    Action1<Throwable> errorHandle = t -> {
-        onLoadingFinished();
-        if (t instanceof IOException) {
-            setErrMessage(R.string.msg_err_internet);
-        } else {
-            setErrMessage(R.string.msg_err_unknown); // Cant set any integer, Can only use StringRes courtesy of support lib
-        }
-    };
-    Action1<Result<ProductsListResponse>> resultsHandler = result -> {
-        onLoadingFinished();
-        if (result.isError()) {
-            errorHandle.call(result.error());
-        } else if (!result.response().isSuccess()) {
-            Converter<ResponseBody, Err> convert = retrofit.responseBodyConverter(Err.class, new Annotation[0]);
-            try {
-                Err err = convert.convert(result.response().errorBody());
-                setErrMessage(err.getMessage());
-            } catch (IOException e) {
-                setErrMessage(R.string.msg_err_unknown);
-            }
-            return;
-        } else {
-            data = result.response().body();
-            setData();
-        }
-    };
 
     /**
      * So that all constants related to extras that need to be set or are required by this fragment
@@ -124,7 +97,7 @@ public class ProductsFragment extends ListFragment implements ProductsAdapter.Pr
         subscribe = request
                 .subscribeOn(Schedulers.newThread())
                 .observeOn(AndroidSchedulers.mainThread())
-                .subscribe(resultsHandler, errorHandle);
+                .subscribe(new ProductsSubscriber(this, this));
     }
 
     private void setData() {
@@ -162,6 +135,38 @@ public class ProductsFragment extends ListFragment implements ProductsAdapter.Pr
         Parcelable parcelable = savedInstanceState.getParcelable(KEY_PRODUCTS);
         if (parcelable != null) {
             data = Parcels.unwrap(parcelable);
+            setData();
+        }
+    }
+
+    @Override
+    public void handleError(Throwable t) {
+        if (t instanceof IOException) {
+            setErrMessage(R.string.msg_err_internet);
+        } else {
+            setErrMessage(R.string.msg_err_unknown); // Cant set any integer, Can only use StringRes courtesy of support lib
+        }
+    }
+
+    @Override
+    public void handleError(Err err) {
+        setErrMessage(err.getMessage());
+    }
+
+    @Override
+    public void handleError(Error error) {
+        // TODO: Handle Error, perhaps auto retry in some cases
+    }
+
+    public class ProductsSubscriber extends HandlerSubscriber<Result<ProductsListResponse>, ProductsListResponse> {
+
+        public ProductsSubscriber(LoadingListener loadingListener, ErrorListener errorListener) {
+            super(loadingListener, errorListener);
+        }
+
+        @Override
+        public void success(Response<ProductsListResponse> response) {
+            data = response.body();
             setData();
         }
     }

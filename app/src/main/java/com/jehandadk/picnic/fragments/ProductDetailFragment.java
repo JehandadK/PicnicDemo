@@ -13,6 +13,7 @@ import com.jehandadk.picnic.R;
 import com.jehandadk.picnic.data.models.Product;
 import com.jehandadk.picnic.data.models.ProductDetail;
 import com.jehandadk.picnic.helpers.Utils;
+import com.jehandadk.picnic.services.HandlerSubscriber;
 import com.jehandadk.picnic.services.IPicnicService;
 
 import org.parceler.Parcels;
@@ -20,11 +21,11 @@ import org.parceler.Parcels;
 import javax.inject.Inject;
 
 import butterknife.Bind;
+import retrofit2.Response;
 import retrofit2.Result;
 import rx.Observable;
 import rx.Subscription;
 import rx.android.schedulers.AndroidSchedulers;
-import rx.functions.Action1;
 import rx.schedulers.Schedulers;
 
 /**
@@ -47,16 +48,6 @@ public class ProductDetailFragment extends BaseFragment {
     Observable<Result<ProductDetail>> request;
     private Product product;
     private ProductDetail data;
-    Action1<Result<ProductDetail>> resultsHandler = result -> {
-        if (result.isError()) {
-            //TODO: Handle Error
-        } else if (!result.response().isSuccess()) {
-            // TODO: Handle other issues
-        } else {
-            data = result.response().body();
-            setData();
-        }
-    };
     private Subscription subscribe;
 
     public static ProductDetailFragment newFragment(Product product) {
@@ -107,10 +98,18 @@ public class ProductDetailFragment extends BaseFragment {
             setData();
             return;
         }
+
+        //TODO: Add Error Handler and add Better Loading Listener
         subscribe = request
                 .subscribeOn(Schedulers.newThread())
                 .observeOn(AndroidSchedulers.mainThread())
-                .subscribe(resultsHandler);
+                .subscribe(new HandlerSubscriber<Result<ProductDetail>, ProductDetail>(getBaseActivity(), null) {
+                    @Override
+                    public void success(Response<ProductDetail> response) {
+                        data = response.body();
+                        setData();
+                    }
+                });
     }
 
 
