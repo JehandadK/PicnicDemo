@@ -23,6 +23,17 @@ public class Product {
     @Expose
     private String image;
 
+
+    public Product() {
+    }
+
+    public Product(Product product) {
+        this.image = product.image;
+        this.name = product.name;
+        this.price = product.price;
+        this.productId = product.productId;
+    }
+
     /**
      * @return The productId
      */

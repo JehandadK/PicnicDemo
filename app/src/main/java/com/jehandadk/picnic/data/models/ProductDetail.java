@@ -12,6 +12,15 @@ public class ProductDetail extends Product {
     @Expose
     private String description;
 
+
+    public ProductDetail(Product product) {
+        super(product);
+    }
+
+    public static ProductDetail with(Product product) {
+        return new ProductDetail(product);
+    }
+
     /**
      * @return The description
      */
@@ -25,5 +34,4 @@ public class ProductDetail extends Product {
     public void setDescription(String description) {
         this.description = description;
     }
-
 }

@@ -2,6 +2,7 @@ package com.jehandadk.picnic.activities;
 
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
+import android.support.v4.app.FragmentManager;
 import android.support.v7.widget.Toolbar;
 import android.view.Menu;
 import android.view.MenuItem;
@@ -19,6 +20,13 @@ public class MainActivity extends BaseActivity {
     Toolbar toolbar;
     @Bind(R.id.frame_fragment)
     FrameLayout frameFragment;
+    private FragmentManager.OnBackStackChangedListener backStackChangedListener = () -> {
+        if (MainActivity.this.getSupportFragmentManager().getBackStackEntryCount() > 0) {
+            MainActivity.this.getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+        } else {
+            MainActivity.this.getSupportActionBar().setDisplayHomeAsUpEnabled(false);
+        }
+    };
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -26,9 +34,11 @@ public class MainActivity extends BaseActivity {
         setContentView(R.layout.activity_main);
         ButterKnife.bind(this);
         setSupportActionBar(toolbar);
-
+        getSupportFragmentManager().addOnBackStackChangedListener(backStackChangedListener);
         if (getCurrentFragment() == null)
             setFrameFragment(ProductsFragment.newFragment());
+        backStackChangedListener.onBackStackChanged();
+        toolbar.setNavigationOnClickListener((v) -> getSupportFragmentManager().popBackStack());
     }
 
     protected void setFrameFragment(Fragment fragment) {

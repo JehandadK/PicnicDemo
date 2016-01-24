@@ -21,6 +21,11 @@ public abstract class ListAdapter<VH extends RecyclerView.ViewHolder, ENTITY> ex
     }
 
     @Override
+    public long getItemId(int position) {
+        return position;
+    }
+
+    @Override
     public void onBindViewHolder(VH holder, int position) {
         onBindViewHolder(holder, list.get(position));
     }
@@ -37,6 +42,12 @@ public abstract class ListAdapter<VH extends RecyclerView.ViewHolder, ENTITY> ex
     }
 
     public void addAll(List<ENTITY> newItems) {
+        list.addAll(newItems);
+        notifyDataSetChanged();
+    }
+
+    public void setAll(List<ENTITY> newItems) {
+        list.clear();
         list.addAll(newItems);
         notifyDataSetChanged();
     }

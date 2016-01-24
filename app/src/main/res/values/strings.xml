@@ -8,5 +8,6 @@
     <string name="msg_err_internet">Please check your internet connection.</string>
     <string name="example_product_price">120</string>
     <string name="example_product_title">Product Title</string>
+    <string name="example_product_desc">This is dummy descriptions</string>
 
 </resources>
